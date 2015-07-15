@@ -3,8 +3,28 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Cargar archivo</title>
+	<style>
+		div {width:350px;height:70px;border:1px solid #CCCCCC;}
+	</style>
+	<script>
+		function permitirSoltar(ev) {
+			ev.preventDefault();
+		}
+		function soltar(ev) {
+			ev.preventDefault();
+			var data = ev.dataTransfer.getData("Text");
+			ev.target.appendChild(document.getElementById(data));
+		}
+		function arrastrar(ev) {
+			ev.dataTransfer.setData("Text", ev.target.id);
+		}
+	</script>
 </head>
 <body>
-	
+	<div ondrop="soltar(event)" ondragover="permitirSoltar(event)"></div>
+	<img id="img" src="img/0OnJKM1s_bigger.jpeg" draggable="true" ondragstart="arrastrar(event)">
+	<form action="">
+		<input type="file">
+	</form>
 </body>
 </html>
