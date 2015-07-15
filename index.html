@@ -35,7 +35,7 @@
 	    function inicio() {
 	        document.getElementById('caja_padre').addEventListener('dragover', permitirDrop, false);    
 	        document.getElementById('caja_padre').addEventListener('drop', drop, false);
-	        document.getElementById('archivo').addEventListener('change', cargar, false);               
+	        document.getElementById('archivo').addEventListener('change', cargar, false);
 	    }
 	    
 	    function drop(ev)
@@ -61,7 +61,6 @@
 	        arch.addEventListener('load',leer,false);
 	        arch.readAsDataURL(ev.target.files[0]);
 	    }
-
 
 	</script>
 
