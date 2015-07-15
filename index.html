@@ -11,21 +11,31 @@
 		  height: 150px;
 		  border: 5px dashed gray;
 		  border-radius: 8px;
-		  background: rgb(230,230,230);
+		  background: rgba(0, 0, 0, 0.4) !important;
+		  background: transparent;
 		  background-repeat: no-repeat;
 		  background-size: 100%;
 		}
-		.caja_padre{
-			width: 500px;
-			height: 500px;
+		#caja_padre{
+			width: 200px;
+			height: 200px;
+			background-repeat: no-repeat;
+			background-size: 100%;
+		}
+		#caja_opaca{
+			background: rgba(255, 255, 255, 0.7) !important;
+			width: 200px;
+			height: 200px;
+			visibility: hidden;
 		}
 	</style>
 	<script>
 	    window.addEventListener('load', inicio, false);
 
 	    function inicio() {
-	        document.getElementById('caja').addEventListener('dragover', permitirDrop, false);    
-	        document.getElementById('caja').addEventListener('drop', drop, false);
+	        document.getElementById('caja_padre').addEventListener('dragover', permitirDrop, false);    
+	        document.getElementById('caja_padre').addEventListener('drop', drop, false);
+	        document.getElementById('archivo').addEventListener('change', cargar, false);               
 	    }
 	    
 	    function drop(ev)
@@ -42,21 +52,32 @@
 	    }    
 	    
 	    function leer(ev) {
-	        document.getElementById('caja').style.backgroundImage="url('" + ev.target.result + "')";
+	        document.getElementById('caja_padre').style.backgroundImage="url('" + ev.target.result + "')";
+	        document.getElementById('caja_opaca').style.visibility="visible";
 	    }
+
+	    function cargar(ev) {
+	        var arch=new FileReader();
+	        arch.addEventListener('load',leer,false);
+	        arch.readAsDataURL(ev.target.files[0]);
+	    }
+
+
 	</script>
 
 </head>
 <body>
 	<p>Arrastrar una imagen desde el escritorio.</p>
-	<div class="caja_padre">
-		<div id="caja">
-		
-		</div>	
+	<div id="caja_padre">
+		<div id="caja_opaca">
+			<div id="caja">
+			
+			</div>	
+		</div>
 	</div>
 	
 	<form action="">
-		<input type="file">
+		<input type="file" id="archivo">
 	</form>
 </body>
 </html>
