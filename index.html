@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>carga archivo desde el escritorio</title>
-
+	<link rel="stylesheet" href="css/jquery.Jcrop.css" type="text/css" />
 	<style>
 		#caja {
 		  margin: 10px;
@@ -11,10 +11,10 @@
 		  height: 150px;
 		  border: 5px dashed gray;
 		  border-radius: 8px;
-		  background: rgba(0, 0, 0, 0.4) !important;
 		  background: transparent;
 		  background-repeat: no-repeat;
 		  background-size: 100%;
+		  position: relative;
 		}
 		#caja_padre{
 			width: 200px;
@@ -28,13 +28,76 @@
 			height: 200px;
 			visibility: hidden;
 		}
+		#archivo{
+			    height: 14em;
+			    top: 0px;
+			    left: 0px;
+			    position: absolute;
+			    width: 15em;
+			    margin-left: 4em;
+			    cursor: pointer;
+			    opacity: 0;
+			}
+		#preview-pane .preview-container {
+		  width: 250px;
+		  height: 170px;
+		  overflow: hidden;
+		}
+		.jcrop-holder #preview-pane {
+			display: block;
+			position: absolute;
+			z-index: 2000;
+			top: 10px;
+			right: -280px;
+			padding: 6px;
+			border: 1px rgba(0,0,0,.4) solid;
+			background-color: white;
+
+			-webkit-border-radius: 6px;
+			-moz-border-radius: 6px;
+			border-radius: 6px;
+
+			-webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+			-moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+			box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+			}
+
 	</style>
+	
+
+</head>
+<body>
+	<p>Arrastrar una imagen desde el escritorio.</p>
+	<div id="caja">
+		<p id="mensaje">
+			Haga click o arrastre un archivo aqui.
+		</p>
+		<form action="">
+			<input type="file" id="archivo">
+		</form>
+		<img src="" alt="" id="imagen2" class="jcrop-preview">
+	</div>
+	<img src="" alt="" id="imagen1" class="jcrop-preview">
+
+
+	<img  src="demos/demo_files/sago.jpg" id="target" alt="[Jcrop Example]" name="target" />
+
+	  <div id="preview-pane">
+	    <div class="preview-container">
+	      <img  src="demos/demo_files/sago.jpg" class="jcrop-preview" alt="Preview" id="target2"/>
+	    </div>
+	  </div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="js/jquery.Jcrop.js"></script>
 	<script>
-	    window.addEventListener('load', inicio, false);
+
+	 $(document).ready(function  () {
+	 	 window.addEventListener('load', inicio, false);
 
 	    function inicio() {
-	        document.getElementById('caja_padre').addEventListener('dragover', permitirDrop, false);    
-	        document.getElementById('caja_padre').addEventListener('drop', drop, false);
+	        document.getElementById('caja').addEventListener('dragover', permitirDrop, false);    
+	        document.getElementById('caja').addEventListener('drop', drop, false);
 	        document.getElementById('archivo').addEventListener('change', cargar, false);
 	    }
 	    
@@ -48,12 +111,22 @@
 	    
 	    function permitirDrop(ev)
 	    {
-	        ev.preventDefault();
+	       // ev.preventDefault();
 	    }    
 	    
 	    function leer(ev) {
-	        document.getElementById('caja_padre').style.backgroundImage="url('" + ev.target.result + "')";
-	        document.getElementById('caja_opaca').style.visibility="visible";
+	       // document.getElementById('caja').style.backgroundImage="url('" + ev.target.result + "')";
+	       // $('#caja').css("backgroundImage","url('" + ev.target.result + "')");
+	        //document.getElementById('caja_opaca').style.visibility="visible";
+	        //document.getElementById('mensaje').style.visibility="hidden";
+	        $('#mensaje').css("visibility","hidden");
+	        var src = ev.target.result;
+	        /*$("#imagen1").attr("src", src);
+	        $("#imagen2").attr("src", src);*/
+	        $("#target").attr("src", src);
+	        $("#target2").attr("src", src);
+	        document.getElementsByTagName('target').src= src
+
 	    }
 
 	    function cargar(ev) {
@@ -62,21 +135,57 @@
 	        arch.readAsDataURL(ev.target.files[0]);
 	    }
 
+	    jQuery(function($) {
+
+		        	// Create variables (in this scope) to hold the API and image size
+		    var jcrop_api,
+		        boundx,
+		        boundy,
+
+		        // Grab some information about the preview pane
+		        $preview = $('#preview-pane'),
+		        $pcnt = $('#preview-pane .preview-container'),
+		        $pimg = $('#preview-pane .preview-container img'),
+
+		        xsize = $pcnt.width(),
+		        ysize = $pcnt.height();
+		    
+		    console.log('init',[xsize,ysize]);
+		    $('#target').Jcrop({
+		      onChange: updatePreview,
+		      onSelect: updatePreview,
+		      aspectRatio: xsize / ysize
+		    },function(){
+		      // Use the API to get the real image size
+		      var bounds = this.getBounds();
+		      boundx = bounds[0];
+		      boundy = bounds[1];
+		      // Store the API in the jcrop_api variable
+		      jcrop_api = this;
+
+		      // Move the preview into the jcrop container for css positioning
+		      $preview.appendTo(jcrop_api.ui.holder);
+		    });
+
+		    function updatePreview(c)
+		    {
+		      if (parseInt(c.w) > 0)
+		      {
+		        var rx = xsize / c.w;
+		        var ry = ysize / c.h;
+
+		        $pimg.css({
+		          width: Math.round(rx * boundx) + 'px',
+		          height: Math.round(ry * boundy) + 'px',
+		          marginLeft: '-' + Math.round(rx * c.x) + 'px',
+		          marginTop: '-' + Math.round(ry * c.y) + 'px'
+		        });
+		      }
+		    };
+
+    	});
+	 });
 	</script>
 
-</head>
-<body>
-	<p>Arrastrar una imagen desde el escritorio.</p>
-	<div id="caja_padre">
-		<div id="caja_opaca">
-			<div id="caja">
-			
-			</div>	
-		</div>
-	</div>
-	
-	<form action="">
-		<input type="file" id="archivo">
-	</form>
 </body>
 </html>

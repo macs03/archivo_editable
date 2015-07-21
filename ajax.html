@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Ajax</title>
+</head>
+<style>
+	.caja{
+		background: red;
+		width: 100px;
+		height: 100px;
+	}
+	.info{
+		background: black;
+		display: none;
+	}
+	.info p{
+		color : white;
+	}
+</style>
+<body>
+	<header>
+		<h1>
+			AJAX API
+		</h1>
+	</header>
+	<section>
+		<div class="caja" id="cajita">
+			
+		</div>
+		<div class="info" id="informacion">
+			<p id="info-id">
+				el id: 
+			</p>
+			<p id="info-content">
+				el contenido:
+			</p>
+		</div>
+	</section>
+	<footer>
+		ajax api
+	</footer>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script>
+
+		$(document).ready(function  () {
+			
+			$('#cajita').mouseenter(function  () {
+				$('#informacion').css("display","block");
+				$.ajax({
+			        url: "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?"
+			    }).then(function(data) {
+			       $('#info-id').append(data.id);
+			       $('#info-content').append(data.content);
+			    });
+			});
+
+			$('#cajita').mouseleave(function  () {
+				$('#informacion').css("display","none");
+			});
+
+
+		});
+
+	</script>
+</body>
+</html>
